@@ -252,8 +252,10 @@ for(k in 1:NI){
 #Extra tip to evaluate convergence
 
 # Plot the parameters densities from the whole chain vs only the second half
+# after getting rid of burn in 
 
 #does it look like the 2 pdfs are very close, i.e. there are enough steps?
+
 pdf(file="overlaid_densities_allVShalf2_parameter.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
@@ -441,7 +443,7 @@ plot(density(pctBelowThresholds[5e3:1e4,10]),main="",
      xlab =paste0("P(Y<",thresholds[10],"|X<-4.7)"),
      col = "turquoise",lwd=3)
 lines(density(pctBelowThresholds[1:1e4,10]),col = "purple",lwd=3)
-legend("topright", c("second half","all"),
+legend("topright", c("second 5k","first 10k"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
 
 dev.off()
@@ -476,9 +478,23 @@ plot(density(pctBelowThresholds[(NI/2+1):NI,10]),main="",
      xlab =paste0("P(Y<",thresholds[10],"|X<-4.7)"),
      col = "turquoise",lwd=3)
 lines(density(pctBelowThresholds[1:NI,10]),col = "purple",lwd=3)
-legend("topright", c("second 5k","first 10k"),
+legend("topright", c("second half","all"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
 
 dev.off()
 
+#compare the rounded uncertainty bounds to the estimate for each significant figure
+
+z <- half_width <- rep(NA, length(thresholds))
+interval <- matrix(data = NA, nrow = length(thresholds), ncol = 2)
+rownames(interval)<- thresholds
+colnames(interval)<- c("lower_bound", "upper_bound")
+for(i in 1:length(thresholds)){
+  z[i] <- (mean(pctBelowThresholds[,i]) - bm_est[i])/bm_se[i]
+  half_width[i] <- z[i] * bm_se[i ]
+  interval[i,1] <- bm_est[i] - half_width[i]
+  interval[i,2] <- bm_est[i] + half_width[i]
+}
+print(interval)
+print(bm_est)
 

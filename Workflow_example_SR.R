@@ -723,9 +723,11 @@ dev.off()
 #Extra tip to evaluate convergence
 
 # Plot the parameters densities from the whole chain vs only the second half
+# after getting rid of burn in 
 
 #does it look like the 2 pdfs are very close, i.e. there are enough steps?
-pdf(file="allVShalf2_parameter.pdf",8,10)  
+
+pdf(file="overlaid_densities_allVShalf2_parameter.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
 
@@ -744,21 +746,21 @@ legend("topright", c("second half","full chain"),
 dev.off()
 
 
-#does it look like 20k is enough steps?
-pdf(file="second10k_vs_first20k_parameter.pdf",8,10)  
+#does it look like 10k is enough steps?
+pdf(file="overlaid_densities_second5k_vs_first10k_parameter.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
 
-plot(density(chain1[1e4:2e4,1]),main="",xlab ="theta1",xlim=c(-12,-9),
+plot(density(chain1[5e3:1e4,1]),main="",xlab ="theta1",xlim=c(-12,-9),
      ylim=c(0,1.5),col = "turquoise",lwd=3)
-lines(density(chain1[1:2e4,1]),col = "purple",lwd=3)
-legend("topright", c("second half","full chain"),
+lines(density(chain1[1:1e4,1]),col = "purple",lwd=3)
+legend("topright", c("second 5k","first 10k"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
 
-plot(density(chain2[1e4:2e4,1]),main="",xlab ="theta2",xlim=c(-3,5),
+plot(density(chain2[5e3:1e4,1]),main="",xlab ="theta2",xlim=c(-3,5),
      ylim=c(0,0.6),col = "turquoise",lwd=3)
-lines(density(chain2[1:2e4,1]),col = "purple",lwd=3)
-legend("topright", c("second half","full chain"),
+lines(density(chain2[1:1e4,1]),col = "purple",lwd=3)
+legend("topright", c("second 5k","first 10k"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
 
 dev.off()
@@ -772,7 +774,7 @@ dev.off()
 #estimating a population proportion with mcmc
 library(batchmeans)
 
-mcmc.chains_noburn<- mcmc.chains[-(1:30000),]
+#mcmc.chains<- mcmc.chains[-(1:30000),]
 
 thresholds<- seq(-200,-300,by=-10)
 
@@ -784,16 +786,16 @@ sd_p_hat<- rep(NA,length(thresholds))
 
 badXinds<- which(X< -4.7)
 
-pctBelowThresholds<- matrix(NA,nrow=nrow(mcmc.chains_noburn),
+pctBelowThresholds<- matrix(NA,nrow=nrow(mcmc.chains),
                             ncol=length(thresholds))
 
 for(th in 1:length(thresholds)){
   
-  Fit_model_MCMC<- mat.or.vec(nrow(mcmc.chains_noburn), length(badXinds))
-  for(j in 1:nrow(mcmc.chains_noburn)){
+  Fit_model_MCMC<- mat.or.vec(nrow(mcmc.chains), length(badXinds))
+  for(j in 1:nrow(mcmc.chains)){
     for (i in badXinds){
-      Fit_model_MCMC[j,i] <- Y(mcmc.chains_noburn[j,1],
-                               mcmc.chains_noburn[j,2],X[i])+
+      Fit_model_MCMC[j,i] <- Y(mcmc.chains[j,1],
+                               mcmc.chains[j,2],X[i])+
         rnorm(1,mean=0,sd=sigma_obs)
     }
   }
@@ -829,14 +831,32 @@ print(bm_se) #monte carlo standard errors for all thresholds
 #how different do the markov chains look for estimating each population proportion?
 pdf(file="PropEstimatesConvergence.pdf",width=8,height=6)
 par(mar=c(5.1, 4.1, 6.1, 2.1), xpd=TRUE)
-plot(1:length(pctBelowThresholds[,1]),pctBelowThresholds[,1],
+plot(1:length(pctBelowThresholds[,2]),pctBelowThresholds[,2],
      type="l", col= "orange", ylim=c(0,1),
      ylab=paste0("P(Y<y|X<-4.7)"),xlab="step")
 #lines(1:length(pctBelowThresholds[,3]),pctBelowThresholds[,3],type="l",col="red")
 lines(1:length(pctBelowThresholds[,6]),pctBelowThresholds[,6],type="l",col="purple")
 #lines(1:length(pctBelowThresholds[,7]),pctBelowThresholds[,7],type="l",col="blue")
 lines(1:length(pctBelowThresholds[,10]),pctBelowThresholds[,10],type="l",col="turquoise")
-legend("topright", c("y=-200","y=-250","y=-290"),
+legend("topright", c(paste0("y=",thresholds[2]),
+                     paste0("y=",thresholds[6]),
+                     paste0("y=",thresholds[10])),
+       lty=1, lwd = 3, col = c("orange","purple","turquoise"),inset=c(0,-0.25))
+dev.off()
+
+#how early do the markov chains for estimating each population proportion converge?
+pdf(file="PropEstimatesConvergenceFirst5k.pdf",width=8,height=6)
+par(mar=c(5.1, 4.1, 6.1, 2.1), xpd=TRUE)
+plot(1:length(pctBelowThresholds[1:5e3,2]),pctBelowThresholds[1:5e3,2],
+     type="l", col= "orange", ylim=c(0,1),
+     ylab=paste0("P(Y<y|X<-4.7)"),xlab="step")
+#lines(1:length(pctBelowThresholds[,3]),pctBelowThresholds[,3],type="l",col="red")
+lines(1:length(pctBelowThresholds[1:5e3,6]),pctBelowThresholds[1:5e3,6],type="l",col="purple")
+#lines(1:length(pctBelowThresholds[,7]),pctBelowThresholds[,7],type="l",col="blue")
+lines(1:length(pctBelowThresholds[1:5e3,10]),pctBelowThresholds[1:5e3,10],type="l",col="turquoise")
+legend("topright", c(paste0("y=",thresholds[2]),
+                     paste0("y=",thresholds[6]),
+                     paste0("y=",thresholds[10])),
        lty=1, lwd = 3, col = c("orange","purple","turquoise"),inset=c(0,-0.25))
 dev.off()
 
@@ -860,6 +880,94 @@ plot(thresholds,bm_se,
      ylab="Monte Carlo Standard Error",
      xlab="y")
 dev.off()   
+
+
+pctBelowThresholds[1:5e3,6]
+
+#does it look like 10k is enough steps?
+pdf(file="overlaid_densities_second5k_vs_first10k_p2.pdf")  
+
+plot(density(pctBelowThresholds[5e3:1e4,2]),main="",
+     xlab =paste0("P(Y<",thresholds[2],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:1e4,2]),col = "purple",lwd=3)
+legend("topright", c("second 5k","first 10k"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+pdf(file="overlaid_densities_second5k_vs_first10k_p6.pdf")  
+
+plot(density(pctBelowThresholds[5e3:1e4,6]),main="",
+     xlab =paste0("P(Y<",thresholds[6],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:1e4,6]),col = "purple",lwd=3)
+legend("topright", c("second 5k","first 10k"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+
+pdf(file="overlaid_densities_second5k_vs_first10k_p10.pdf")  
+
+plot(density(pctBelowThresholds[5e3:1e4,10]),main="",
+     xlab =paste0("P(Y<",thresholds[10],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:1e4,10]),col = "purple",lwd=3)
+legend("topright", c("second 5k","first 10k"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+#does it look like 130k is enough steps?
+pdf(file="overlaid_densities_half1_vs_all_p2.pdf")  
+
+plot(density(pctBelowThresholds[(NI/2+1):NI,2]),main="",
+     xlab =paste0("P(Y<",thresholds[2],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:NI,2]),col = "purple",lwd=3)
+legend("topright", c("second half","all"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+pdf(file="overlaid_densities_half1_vs_all_p6.pdf")  
+
+plot(density(pctBelowThresholds[(NI/2+1):NI,6]),main="",
+     xlab =paste0("P(Y<",thresholds[6],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:NI,6]),col = "purple",lwd=3)
+legend("topright", c("second half","all"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+
+pdf(file="overlaid_densities_half1_vs_all_p10.pdf")  
+
+plot(density(pctBelowThresholds[(NI/2+1):NI,10]),main="",
+     xlab =paste0("P(Y<",thresholds[10],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:NI,10]),col = "purple",lwd=3)
+legend("topright", c("second half","all"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+#compare the rounded uncertainty bounds to the estimate for each significant figure
+
+z <- half_width <- rep(NA, length(thresholds))
+interval <- matrix(data = NA, nrow = length(thresholds), ncol = 2)
+rownames(interval)<- thresholds
+colnames(interval)<- c("lower_bound", "upper_bound")
+for(i in 1:length(thresholds)){
+  z[i] <- (mean(pctBelowThresholds[,i]) - bm_est[i])/bm_se[i]
+  half_width[i] <- z[i] * bm_se[i ]
+  interval[i,1] <- bm_est[i] - half_width[i]
+  interval[i,2] <- bm_est[i] + half_width[i]
+}
+print(interval)
+print(bm_est)
 
 
 ################################################################################
