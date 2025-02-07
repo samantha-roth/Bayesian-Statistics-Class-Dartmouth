@@ -301,7 +301,7 @@ dev.off()
 #estimating a population proportion with mcmc
 library(batchmeans)
 
-mcmc.chains_noburn<- mcmc.chains[-(1:30000),]
+#mcmc.chains<- mcmc.chains[-(1:30000),]
 
 thresholds<- seq(-200,-300,by=-10)
 
@@ -313,16 +313,16 @@ sd_p_hat<- rep(NA,length(thresholds))
 
 badXinds<- which(X< -4.7)
 
-pctBelowThresholds<- matrix(NA,nrow=nrow(mcmc.chains_noburn),
+pctBelowThresholds<- matrix(NA,nrow=nrow(mcmc.chains),
                             ncol=length(thresholds))
 
 for(th in 1:length(thresholds)){
   
-  Fit_model_MCMC<- mat.or.vec(nrow(mcmc.chains_noburn), length(badXinds))
-  for(j in 1:nrow(mcmc.chains_noburn)){
+  Fit_model_MCMC<- mat.or.vec(nrow(mcmc.chains), length(badXinds))
+  for(j in 1:nrow(mcmc.chains)){
     for (i in badXinds){
-      Fit_model_MCMC[j,i] <- Y(mcmc.chains_noburn[j,1],
-                               mcmc.chains_noburn[j,2],X[i])+
+      Fit_model_MCMC[j,i] <- Y(mcmc.chains[j,1],
+                               mcmc.chains[j,2],X[i])+
         rnorm(1,mean=0,sd=sigma_obs)
     }
   }
@@ -365,6 +365,20 @@ plot(1:length(pctBelowThresholds[,1]),pctBelowThresholds[,1],
 lines(1:length(pctBelowThresholds[,6]),pctBelowThresholds[,6],type="l",col="purple")
 #lines(1:length(pctBelowThresholds[,7]),pctBelowThresholds[,7],type="l",col="blue")
 lines(1:length(pctBelowThresholds[,10]),pctBelowThresholds[,10],type="l",col="turquoise")
+legend("topright", c("y=-200","y=-250","y=-290"),
+       lty=1, lwd = 3, col = c("orange","purple","turquoise"),inset=c(0,-0.25))
+dev.off()
+
+
+pdf(file="PropEstimatesConvergenceFirst5k.pdf",width=8,height=6)
+par(mar=c(5.1, 4.1, 6.1, 2.1), xpd=TRUE)
+plot(1:length(pctBelowThresholds[1:5e3,1]),pctBelowThresholds[1:5e3,1],
+     type="l", col= "orange", ylim=c(0,1),
+     ylab=paste0("P(Y<y|X<-4.7)"),xlab="step")
+#lines(1:length(pctBelowThresholds[,3]),pctBelowThresholds[,3],type="l",col="red")
+lines(1:length(pctBelowThresholds[1:5e3,6]),pctBelowThresholds[1:5e3,6],type="l",col="purple")
+#lines(1:length(pctBelowThresholds[,7]),pctBelowThresholds[,7],type="l",col="blue")
+lines(1:length(pctBelowThresholds[1:5e3,10]),pctBelowThresholds[1:5e3,10],type="l",col="turquoise")
 legend("topright", c("y=-200","y=-250","y=-290"),
        lty=1, lwd = 3, col = c("orange","purple","turquoise"),inset=c(0,-0.25))
 dev.off()
