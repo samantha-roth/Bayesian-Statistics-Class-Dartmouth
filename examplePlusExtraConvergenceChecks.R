@@ -273,20 +273,20 @@ legend("topright", c("second half","full chain"),
 dev.off()
 
 
-#does it look like 20k is enough steps?
-pdf(file="second10k_vs_first20k_parameter.pdf",8,10)  
+#does it look like 10k is enough steps?
+pdf(file="second5k_vs_first10k_parameter.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
 
-plot(density(chain1[1e4:2e4,1]),main="",xlab ="theta1",xlim=c(-12,-9),
+plot(density(chain1[5e3:1e4,1]),main="",xlab ="theta1",xlim=c(-12,-9),
      ylim=c(0,1.5),col = "turquoise",lwd=3)
-lines(density(chain1[1:2e4,1]),col = "purple",lwd=3)
+lines(density(chain1[1:1e4,1]),col = "purple",lwd=3)
 legend("topright", c("second half","full chain"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
 
-plot(density(chain2[1e4:2e4,1]),main="",xlab ="theta2",xlim=c(-3,5),
+plot(density(chain2[5e3:1e4,1]),main="",xlab ="theta2",xlim=c(-3,5),
      ylim=c(0,0.6),col = "turquoise",lwd=3)
-lines(density(chain2[1:2e4,1]),col = "purple",lwd=3)
+lines(density(chain2[1:1e4,1]),col = "purple",lwd=3)
 legend("topright", c("second half","full chain"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
 
@@ -358,28 +358,32 @@ print(bm_se) #monte carlo standard errors for all thresholds
 #how different do the markov chains look for estimating each population proportion?
 pdf(file="PropEstimatesConvergence.pdf",width=8,height=6)
 par(mar=c(5.1, 4.1, 6.1, 2.1), xpd=TRUE)
-plot(1:length(pctBelowThresholds[,1]),pctBelowThresholds[,1],
+plot(1:length(pctBelowThresholds[,2]),pctBelowThresholds[,2],
            type="l", col= "orange", ylim=c(0,1),
            ylab=paste0("P(Y<y|X<-4.7)"),xlab="step")
 #lines(1:length(pctBelowThresholds[,3]),pctBelowThresholds[,3],type="l",col="red")
 lines(1:length(pctBelowThresholds[,6]),pctBelowThresholds[,6],type="l",col="purple")
 #lines(1:length(pctBelowThresholds[,7]),pctBelowThresholds[,7],type="l",col="blue")
 lines(1:length(pctBelowThresholds[,10]),pctBelowThresholds[,10],type="l",col="turquoise")
-legend("topright", c("y=-200","y=-250","y=-290"),
+legend("topright", c(paste0("y=",thresholds[2]),
+                     paste0("y=",thresholds[6]),
+                     paste0("y=",thresholds[10])),
        lty=1, lwd = 3, col = c("orange","purple","turquoise"),inset=c(0,-0.25))
 dev.off()
 
-
+#how early do the markov chains for estimating each population proportion converge?
 pdf(file="PropEstimatesConvergenceFirst5k.pdf",width=8,height=6)
 par(mar=c(5.1, 4.1, 6.1, 2.1), xpd=TRUE)
-plot(1:length(pctBelowThresholds[1:5e3,1]),pctBelowThresholds[1:5e3,1],
+plot(1:length(pctBelowThresholds[1:5e3,2]),pctBelowThresholds[1:5e3,2],
      type="l", col= "orange", ylim=c(0,1),
      ylab=paste0("P(Y<y|X<-4.7)"),xlab="step")
 #lines(1:length(pctBelowThresholds[,3]),pctBelowThresholds[,3],type="l",col="red")
 lines(1:length(pctBelowThresholds[1:5e3,6]),pctBelowThresholds[1:5e3,6],type="l",col="purple")
 #lines(1:length(pctBelowThresholds[,7]),pctBelowThresholds[,7],type="l",col="blue")
 lines(1:length(pctBelowThresholds[1:5e3,10]),pctBelowThresholds[1:5e3,10],type="l",col="turquoise")
-legend("topright", c("y=-200","y=-250","y=-290"),
+legend("topright", c(paste0("y=",thresholds[2]),
+                     paste0("y=",thresholds[6]),
+                     paste0("y=",thresholds[10])),
        lty=1, lwd = 3, col = c("orange","purple","turquoise"),inset=c(0,-0.25))
 dev.off()
 
@@ -404,5 +408,77 @@ plot(thresholds,bm_se,
      xlab="y")
 dev.off()   
 
+
+pctBelowThresholds[1:5e3,6]
+
+#does it look like 10k is enough steps?
+pdf(file="overlaid_densities_second5k_vs_first10k_p2.pdf")  
+
+plot(density(pctBelowThresholds[5e3:1e4,2]),main="",
+     xlab =paste0("P(Y<",thresholds[2],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:1e4,2]),col = "purple",lwd=3)
+legend("topright", c("second 5k","first 10k"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+pdf(file="overlaid_densities_second5k_vs_first10k_p6.pdf")  
+
+plot(density(pctBelowThresholds[5e3:1e4,6]),main="",
+     xlab =paste0("P(Y<",thresholds[6],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:1e4,6]),col = "purple",lwd=3)
+legend("topright", c("second 5k","first 10k"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+
+pdf(file="overlaid_densities_second5k_vs_first10k_p10.pdf")  
+
+plot(density(pctBelowThresholds[5e3:1e4,10]),main="",
+     xlab =paste0("P(Y<",thresholds[10],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:1e4,10]),col = "purple",lwd=3)
+legend("topright", c("second half","all"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+#does it look like 130k is enough steps?
+pdf(file="overlaid_densities_half1_vs_all_p2.pdf")  
+
+plot(density(pctBelowThresholds[(NI/2+1):NI,2]),main="",
+     xlab =paste0("P(Y<",thresholds[2],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:NI,2]),col = "purple",lwd=3)
+legend("topright", c("second half","all"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+pdf(file="overlaid_densities_half1_vs_all_p6.pdf")  
+
+plot(density(pctBelowThresholds[(NI/2+1):NI,6]),main="",
+     xlab =paste0("P(Y<",thresholds[6],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:NI,6]),col = "purple",lwd=3)
+legend("topright", c("second half","all"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+
+pdf(file="overlaid_densities_half1_vs_all_p10.pdf")  
+
+plot(density(pctBelowThresholds[(NI/2+1):NI,10]),main="",
+     xlab =paste0("P(Y<",thresholds[10],"|X<-4.7)"),
+     col = "turquoise",lwd=3)
+lines(density(pctBelowThresholds[1:NI,10]),col = "purple",lwd=3)
+legend("topright", c("second 5k","first 10k"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
 
 
