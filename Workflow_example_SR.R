@@ -715,6 +715,153 @@ legend("bottomright", c("Observations","True model",
        col=c("black","blue","red","grey"))
 dev.off()
 
+
+################################################################################
+####################### ADDED BY SAMANTHA ROTH #################################
+################################################################################
+
+#Extra tip to evaluate convergence
+
+# Plot the parameters densities from the whole chain vs only the second half
+
+#does it look like the 2 pdfs are very close, i.e. there are enough steps?
+pdf(file="allVShalf2_parameter.pdf",8,10)  
+par( mfrow= c(2,1))
+par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
+
+plot(density(chain1[(NI/2+1):NI,1]),main="",xlab ="theta1",xlim=c(-12,-9),
+     ylim=c(0,1.5),col = "turquoise",lwd=3)
+lines(density(chain1[1:NI,1]),col = "purple",lwd=3)
+legend("topright", c("second half","full chain"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+plot(density(chain2[(NI/2+1):NI,1]),main="",xlab ="theta2",xlim=c(-3,5),
+     ylim=c(0,0.6),col = "turquoise",lwd=3)
+lines(density(chain2[1:NI,1]),col = "purple",lwd=3)
+legend("topright", c("second half","full chain"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+
+#does it look like 20k is enough steps?
+pdf(file="second10k_vs_first20k_parameter.pdf",8,10)  
+par( mfrow= c(2,1))
+par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
+
+plot(density(chain1[1e4:2e4,1]),main="",xlab ="theta1",xlim=c(-12,-9),
+     ylim=c(0,1.5),col = "turquoise",lwd=3)
+lines(density(chain1[1:2e4,1]),col = "purple",lwd=3)
+legend("topright", c("second half","full chain"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+plot(density(chain2[1e4:2e4,1]),main="",xlab ="theta2",xlim=c(-3,5),
+     ylim=c(0,0.6),col = "turquoise",lwd=3)
+lines(density(chain2[1:2e4,1]),col = "purple",lwd=3)
+legend("topright", c("second half","full chain"),
+       lty=1, lwd = 3, col = c("turquoise","purple"))
+
+dev.off()
+
+################################################################################
+################################################################################
+#what if you're interested in estimating a population proportion with mcmc?
+#how should you evaluate the reliability of your estimate?
+#does monte carlo standard error change with the proportion you're estimating?
+
+#estimating a population proportion with mcmc
+library(batchmeans)
+
+mcmc.chains_noburn<- mcmc.chains[-(1:30000),]
+
+thresholds<- seq(-200,-300,by=-10)
+
+bm_est<- rep(NA,length(thresholds))
+bm_se<- rep(NA,length(thresholds))
+
+p_hat<- rep(NA,length(thresholds))
+sd_p_hat<- rep(NA,length(thresholds))
+
+badXinds<- which(X< -4.7)
+
+pctBelowThresholds<- matrix(NA,nrow=nrow(mcmc.chains_noburn),
+                            ncol=length(thresholds))
+
+for(th in 1:length(thresholds)){
+  
+  Fit_model_MCMC<- mat.or.vec(nrow(mcmc.chains_noburn), length(badXinds))
+  for(j in 1:nrow(mcmc.chains_noburn)){
+    for (i in badXinds){
+      Fit_model_MCMC[j,i] <- Y(mcmc.chains_noburn[j,1],
+                               mcmc.chains_noburn[j,2],X[i])+
+        rnorm(1,mean=0,sd=sigma_obs)
+    }
+  }
+  
+  ind_mat<- matrix(NA,nrow=nrow(Fit_model_MCMC),ncol=ncol(Fit_model_MCMC))
+  for(j in 1:ncol(Fit_model_MCMC)){
+    ind_mat[,j]<- ifelse(Fit_model_MCMC[,j]< thresholds[th],1,0)
+  }
+  
+  pctBelowThreshold<-rowSums(ind_mat)/ncol(ind_mat)
+  pctBelowThresholds[,th]<- pctBelowThreshold
+  
+  #print(plot(1:length(pctBelowThreshold),pctBelowThreshold,type="l",ylab=paste0("P(Y<",thresholds[th],"|X<-4.7)"),xlab="step"))
+  
+  #estimate P(Y < -290 | X< -4.7)
+  p_hat[th]<- mean(pctBelowThreshold)
+  
+  #what's the standard deviation of this estimate using the traditional approach
+  #for calculating the standard devation of a sample proportion, where
+  # sqrt(n)*(p_hat- p)/ sqrt(p(1-p)) ~ N( 0 , 1 )
+  sd_p_hat[th]<- sqrt(p_hat[th]*(1-p_hat[th])/length(pctBelowThreshold))
+  
+  #now use the batchmeans package to estimate the 
+  #mean and standard error
+  bm_est[th]<- bm(pctBelowThreshold)$est
+  bm_se[th]<- bm(pctBelowThreshold)$se
+  
+}
+
+print(bm_est) #monte carlo estimate of P(Y<threshold | X< -4.7) for each threshold
+print(bm_se) #monte carlo standard errors for all thresholds
+
+#how different do the markov chains look for estimating each population proportion?
+pdf(file="PropEstimatesConvergence.pdf",width=8,height=6)
+par(mar=c(5.1, 4.1, 6.1, 2.1), xpd=TRUE)
+plot(1:length(pctBelowThresholds[,1]),pctBelowThresholds[,1],
+     type="l", col= "orange", ylim=c(0,1),
+     ylab=paste0("P(Y<y|X<-4.7)"),xlab="step")
+#lines(1:length(pctBelowThresholds[,3]),pctBelowThresholds[,3],type="l",col="red")
+lines(1:length(pctBelowThresholds[,6]),pctBelowThresholds[,6],type="l",col="purple")
+#lines(1:length(pctBelowThresholds[,7]),pctBelowThresholds[,7],type="l",col="blue")
+lines(1:length(pctBelowThresholds[,10]),pctBelowThresholds[,10],type="l",col="turquoise")
+legend("topright", c("y=-200","y=-250","y=-290"),
+       lty=1, lwd = 3, col = c("orange","purple","turquoise"),inset=c(0,-0.25))
+dev.off()
+
+# How does the population proportion estimate change with the threshold?
+pdf(file="Threshold_vs_PctBelowThreshold.pdf",width=6,height=5) 
+plot(thresholds,bm_est,
+     ylab="Estimated P(Y< y|X < -4.7)",
+     xlab="y")
+dev.off()   
+
+# How does the monte carlo standard error change with the population proportion estimate?
+pdf(file="PctBelowThreshold_vs_BMSE.pdf",width=6,height=5) 
+plot(bm_est,bm_se,
+     ylab="Monte Carlo Standard Error",
+     xlab="Estimated P(Y< y|X < -4.7)")
+dev.off()   
+
+# How does the monte carlo standard error change with the threshold?
+pdf(file="Threshold_vs_MCSE.pdf",width=6,height=5) 
+plot(thresholds,bm_se,
+     ylab="Monte Carlo Standard Error",
+     xlab="y")
+dev.off()   
+
+
 ################################################################################
 # Sobol Sensitivity Analysis on Peak value using the model
 

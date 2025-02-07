@@ -369,20 +369,21 @@ legend("topright", c("y=-200","y=-250","y=-290"),
        lty=1, lwd = 3, col = c("orange","purple","turquoise"),inset=c(0,-0.25))
 dev.off()
 
-# plot the observational data, true model and best fit curve
+# How does the population proportion estimate change with the threshold?
 pdf(file="Threshold_vs_PctBelowThreshold.pdf",width=6,height=5) 
 plot(thresholds,bm_est,
      ylab="Estimated P(Y< y|X < -4.7)",
      xlab="y")
 dev.off()   
 
-# plot the observational data, true model and best fit curve
+# How does the monte carlo standard error change with the population proportion estimate?
 pdf(file="PctBelowThreshold_vs_BMSE.pdf",width=6,height=5) 
 plot(bm_est,bm_se,
      ylab="Monte Carlo Standard Error",
      xlab="Estimated P(Y< y|X < -4.7)")
 dev.off()   
 
+# How does the monte carlo standard error change with the threshold?
 pdf(file="Threshold_vs_MCSE.pdf",width=6,height=5) 
 plot(thresholds,bm_se,
      ylab="Monte Carlo Standard Error",
