@@ -254,7 +254,7 @@ for(k in 1:NI){
 # Plot the parameters densities from the whole chain vs only the second half
 
 #does it look like the 2 pdfs are very close, i.e. there are enough steps?
-pdf(file="allVShalf2_parameter.pdf",8,10)  
+pdf(file="overlaid_densities_allVShalf2_parameter.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
 
@@ -274,20 +274,20 @@ dev.off()
 
 
 #does it look like 10k is enough steps?
-pdf(file="second5k_vs_first10k_parameter.pdf",8,10)  
+pdf(file="overlaid_densities_second5k_vs_first10k_parameter.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
 
 plot(density(chain1[5e3:1e4,1]),main="",xlab ="theta1",xlim=c(-12,-9),
      ylim=c(0,1.5),col = "turquoise",lwd=3)
 lines(density(chain1[1:1e4,1]),col = "purple",lwd=3)
-legend("topright", c("second half","full chain"),
+legend("topright", c("second 5k","first 10k"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
 
 plot(density(chain2[5e3:1e4,1]),main="",xlab ="theta2",xlim=c(-3,5),
      ylim=c(0,0.6),col = "turquoise",lwd=3)
 lines(density(chain2[1:1e4,1]),col = "purple",lwd=3)
-legend("topright", c("second half","full chain"),
+legend("topright", c("second 5k","first 10k"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
 
 dev.off()
