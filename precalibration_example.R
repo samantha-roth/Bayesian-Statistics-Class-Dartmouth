@@ -78,10 +78,10 @@ for (i in 1:length(X)){
 #Get a lhs sample
 #theta_1~ unif(-20, 0) 
 #theta_2 ~ unif(-20, 20)  
-theta1_range<- c(-15,-5)
-theta2_range<- c(0,4)
+theta1_range<- c(-20,0)
+theta2_range<- c(-20,20)
 
-nSamples<- 10000
+nSamples<- 1000
 nPars<- 2
 
 ##100 samples, 4 variables
@@ -123,16 +123,16 @@ for(i in 1:nrow(lhs_sample)){
 #evaluate for which lhs samples all function evaluations are within the 
 #uncertainty bounds for all observations
 
-in_bds<- matrix(NA, nrow= nrow(lhs_sample), ncol= length(t_obs))
+in_bds<- matrix(NA, nrow= nrow(lhs_sample), ncol= length(Observation))
 for(i in 1:nrow(lhs_sample)){
   for(j in 1:length(t_obs)){
-    in_bds[i,j]<- behavioral_func(sigma_obs, t_obs[j], Y(lhs_sample[i,1],lhs_sample[i,2],t_obs[j]))
+    in_bds[i,j]<- behavioral_func(sigma_obs, Observation[j], Y(lhs_sample[i,1],lhs_sample[i,2],t_obs[j]))
   }
 }
 
 tot_in_bds<- rowSums(in_bds)
 
-good_inds<- which(tot_in_bds==length(t_obs))
+good_inds<- which(tot_in_bds==length(Observation))
 good_samples<- lhs_sample[good_inds,]
 
 #estimate the expected values of theta_1 and theta_2
