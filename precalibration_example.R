@@ -109,17 +109,7 @@ behavioral_func<- function(sigma_obs, obs, model_eval){
 #all t_obs values
 
 #create a matrix where the row corresponds to the lhs sample 
-#and the column corresponds to the t_obs value
-
-Y_evals_lhs<- matrix(NA, nrow= nrow(lhs_sample), ncol= length(t_obs))
-
-for(i in 1:nrow(lhs_sample)){
-  for(j in 1:length(t_obs)){
-    Y_evals_lhs[i,j]<- Y(lhs_sample[i,1],lhs_sample[i,2],t_obs[j])
-  }
-}
-
-################################################################################
+#and the column corresponds to the t_obs value, then
 #evaluate for which lhs samples all function evaluations are within the 
 #uncertainty bounds for all observations
 
@@ -163,7 +153,7 @@ for(ss in test_ss){
   in_bds<- matrix(NA, nrow= nrow(lhs_new), ncol= length(t_obs))
   for(i in 1:nrow(lhs_new)){
     for(j in 1:length(t_obs)){
-      in_bds[i,j]<- behavioral_func(sigma_obs, t_obs[j], Y(lhs_new[i,1],lhs_new[i,2],t_obs[j]))
+      in_bds[i,j]<- behavioral_func(sigma_obs, Observation[j], Y(lhs_new[i,1],lhs_new[i,2],t_obs[j]))
     }
   }
   
@@ -180,8 +170,8 @@ for(ss in test_ss){
   e_theta1_chain<- c(e_theta1_chain,e_theta1_new)
   e_theta2_chain<- c(e_theta2_chain,e_theta2_new)
   
-  if(abs(e_theta1_new-e_theta1_old)<(theta1_range[2]-theta1_range[1])/1000 &
-     abs(e_theta2_new-e_theta2_old)<(theta2_range[2]-theta2_range[1])/1000){
+  if(abs(e_theta1_new-e_theta1_old)<(theta1_range[2]-theta1_range[1])/20 &
+     abs(e_theta2_new-e_theta2_old)<(theta2_range[2]-theta2_range[1])/20){
     break
   } 
   else{
