@@ -133,7 +133,7 @@ e_theta2<- mean(lhs_sample[good_inds,2])
 
 ################################################################################
 
-maxSamples<- 5e6
+maxSamples<- 5e5
 nAdd<- 1000
 
 e_theta1_chain<- e_theta1
@@ -150,16 +150,16 @@ for(ss in test_ss){
   lhs_new[,1]<- qunif(new_lhs_0_1[,1], min = -20, max = 0)
   lhs_new[,2]<- qunif(new_lhs_0_1[,2], min = -20, max = 20)
   
-  in_bds<- matrix(NA, nrow= nrow(lhs_new), ncol= length(t_obs))
+  in_bds<- matrix(NA, nrow= nrow(lhs_new), ncol= length(Observation))
   for(i in 1:nrow(lhs_new)){
-    for(j in 1:length(t_obs)){
+    for(j in 1:length(Observation)){
       in_bds[i,j]<- behavioral_func(sigma_obs, Observation[j], Y(lhs_new[i,1],lhs_new[i,2],t_obs[j]))
     }
   }
   
   tot_in_bds<- rowSums(in_bds)
   
-  good_inds<- which(tot_in_bds==length(t_obs))
+  good_inds<- which(tot_in_bds==length(Observation))
   good_samples<- lhs_new[good_inds,]
   
   #estimate the expected values of theta_1 and theta_2
@@ -170,14 +170,14 @@ for(ss in test_ss){
   e_theta1_chain<- c(e_theta1_chain,e_theta1_new)
   e_theta2_chain<- c(e_theta2_chain,e_theta2_new)
   
-  if(abs(e_theta1_new-e_theta1_old)<(theta1_range[2]-theta1_range[1])/20 &
-     abs(e_theta2_new-e_theta2_old)<(theta2_range[2]-theta2_range[1])/20){
-    break
-  } 
-  else{
+  #if(abs(e_theta1_new-e_theta1_old)<(theta1_range[2]-theta1_range[1])/100 &
+  #   abs(e_theta2_new-e_theta2_old)<(theta2_range[2]-theta2_range[1])/100){
+  #  break
+  #} 
+  #else{
     lhs_0_1<- new_lhs_0_1
     e_theta1_old<- e_theta1_new
     e_theta2_old<- e_theta2_new
-  }
+  #}
 }
 
