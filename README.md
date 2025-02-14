@@ -1,5 +1,12 @@
 ## Overview
-This repository stores the workflow for examples in the course "Bayesian Statistical Modeling and Computation" at Dartmouth College. This includes all data and code used in the analysis and all generated figures.
+This codes includes a toy example for implementing a workflow to
+- fit a model to data
+- perform a positive control test
+- perform a method comparison (Frequentist Bootstrap vs Bayesian calibration via MCMC) 
+- assess convergence and 
+- perform two methods for sensitivity analysis
+
+This code also includes an example for implementing a workflow to compare Bayesian calibration via MCMC to precalibration.
 
 ## How to run:
 1. Save the file in a directory
@@ -12,7 +19,7 @@ This repository stores the workflow for examples in the course "Bayesian Statist
 Workflow_example_SR.R
 
 ## Additional examples
-- precalibration_vs_mcmc_example.R is not included in the main document.
+- precalibration_vs_mcmc_example.R is not included in the main document. This code compares Bayesian calibration via MCMC to precalibration.
 - examplePlusExtraConvergenceChecks.R is included in the main document, but can also be run separately.
 
 ## Contributors
