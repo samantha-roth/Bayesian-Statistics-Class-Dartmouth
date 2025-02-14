@@ -147,6 +147,10 @@ e_theta2_chain<- e_theta2
 
 test_ss<- seq(nSamples+nAdd,maxSamples,by=nAdd)
 
+################################################################################
+#THE BELOW CODE CAN BE COMMENTED OUT TO SAVE TIME 
+#AND THE RESULTS CAN BE LOADED INSTEAD
+
 for(ss in test_ss){
   new_lhs_0_1 <- augmentLHS(lhs_0_1, m = nAdd)  # Add 5 new samples to the existing design
   lhs_new<- matrix(0, nrow(new_lhs_0_1), nPars)
@@ -186,14 +190,23 @@ for(ss in test_ss){
   print(ss)
 }
 
+
 #save precalibration data
 if(!dir.exists("data")) dir.create("data")
 if(!dir.exists("data/precal")) dir.create("data/precal")
+
 save(e_theta1_chain,file="data/precal/e_theta1_chain")
 save(e_theta2_chain,file="data/precal/e_theta2_chain")
 
 save(good_inds,file="data/precal/good_inds")
 save(lhs_new,file="data/precal/lhs_new")
+
+#LOAD DATA BELOW IF YOU WANT TO SKIP RUNNING PRECALIBRATION
+#load("data/precal/e_theta1_chain")
+#load("data/precal/e_theta2_chain")
+
+#load("data/precal/good_inds")
+#load("data/precal/lhs_new")
 ################################################################################
 
 #compare convergence of theta estimates from precalibration 
