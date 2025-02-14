@@ -87,7 +87,6 @@ library(MASS)
 library(fields)
 
 
-
 ################################################################################
 # Define a seed for reproducibility
 set.seed(314)
