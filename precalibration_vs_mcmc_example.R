@@ -1,4 +1,4 @@
-#SR 2025
+#Samantha Roth 2025
 #here we compare estimation of model parameters using precalibration
 #VS Bayesian calibration with MCMC.
 
