@@ -10,7 +10,7 @@ graphics.off()
 ################################################################################
 
 #set your working directory
-setwd("/Users/f007f8t/Documents/GitHub/Bayesian-Statistics-Class-Dartmouth")
+setwd("./Bayesian-Statistics-Class-Dartmouth")
 
 ################################################################################
 # Install and load the required libraries
