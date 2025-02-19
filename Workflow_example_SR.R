@@ -62,7 +62,7 @@ graphics.off()
 ################################################################################
 
 #set your working directory
-setwd("./Bayesian-Statistics-Class-Dartmouth")
+setwd("/Users/f007f8t/Documents/GitHub/Bayesian-Statistics-Class-Dartmouth")
 
 ################################################################################
 # Install and load the required libraries
@@ -498,8 +498,6 @@ legend("bottomright", theta2_names,
 dev.off() 
 
 
-
-
 # Posterior scan
 
 # Generate x,y,z for the contour plot
@@ -546,6 +544,50 @@ legend("bottomleft", c("log posterior for fixed theta2","True value"),
 
 dev.off() 
 #SR: changed 100 to 101 in line 527, 100 to 111 in line 534
+
+#SR: Generate random realizations from the fit curves 
+#using last 10000 MCMC simulations
+Fit_model_MCMC<- mat.or.vec(10000, length(X))
+for(j in 1:10000){
+  for (i in 1:length(X)){
+    Fit_model_MCMC[j,i] <- Y(mcmc.chains[length(mcmc.chains)/2-j,1],
+                             mcmc.chains[length(mcmc.chains)/2-j,2],X[i])+
+      rnorm(1,mean=0,sd=sigma_obs)
+  }
+}
+
+
+
+# Generate the fit curves using mean and 5-95%CI of the last 10000 MCMC simulations
+
+Fit.mcmc.CI = mat.or.vec(length(X), 2)
+Fit.mcmc.mean = c()
+
+for(i in 1:length(X)){  
+  Fit.mcmc.CI[i,] <- quantile(Fit_model_MCMC[,i], probs = c(.05, .95))
+  Fit.mcmc.mean[i] <- mean(Fit_model_MCMC[,i])
+  
+}
+
+
+# plot the observational data, true model and best fit curve using MCMC
+pdf(file="Best_fit_MCMC.pdf",10,6.17) 
+
+plot(X, Fit.mcmc.mean, col="red", type="l",lty=2,lwd=2,ylim=c(-300,30),
+     xlim=c(-4.5,4.5) , xlab="t",
+     ylab="y")
+
+lines(X, Fit.mcmc.CI[,1], col="grey", lty=2, lwd=2)
+lines(X, Fit.mcmc.CI[,2], col="grey", lty=2,lwd=2)
+lines(X, True_Y, col="blue", lwd=2)
+
+points(t_obs,Observation, type="p",xlab="t",
+       ylab="y",col="black",lwd=3)
+legend("bottomright", c("Observations","True model",
+                        "Best Fit-mean mcmc","5-95% ( CI-mcmc + Noise )"), 
+       lty=c(NA,1,2,2),lwd=c(2,2,2,2), pch=c(1,NA,NA,NA), 
+       col=c("black","blue","red","grey"))
+dev.off()
 
 
 # Plot the parameters densities for different seeds
@@ -667,53 +709,6 @@ image.plot (t2,ylab ="theta2",xlab ="theta1",
             legend.args = list( text = "Density\nBootstrapping\n",cex = .8),
             col=rev(heat.colors(15)))
 dev.off()
-
-
-
-#SR: Generate random realizations from the fit curves 
-#using last 10000 MCMC simulations
-Fit_model_MCMC<- mat.or.vec(10000, length(X))
-for(j in 1:10000){
-  for (i in 1:length(X)){
-    Fit_model_MCMC[j,i] <- Y(mcmc.chains[length(mcmc.chains)/2-j,1],
-                             mcmc.chains[length(mcmc.chains)/2-j,2],X[i])+
-      rnorm(1,mean=0,sd=sigma_obs)
-  }
-}
-
-
-
-# Generate the fit curves using mean and 5-95%CI of the last 10000 MCMC simulations
-
-Fit.mcmc.CI = mat.or.vec(length(X), 2)
-Fit.mcmc.mean = c()
-
-for(i in 1:length(X)){  
-  Fit.mcmc.CI[i,] <- quantile(Fit_model_MCMC[,i], probs = c(.05, .95))
-  Fit.mcmc.mean[i] <- mean(Fit_model_MCMC[,i])
-  
-}
-
-
-# plot the observational data, true model and best fit curve using MCMC
-pdf(file="Best_fit_MCMC.pdf",10,6.17) 
-
-plot(X, Fit.mcmc.mean, col="red", type="l",lty=2,lwd=2,ylim=c(-300,30),
-     xlim=c(-4.5,4.5) , xlab="t",
-     ylab="y")
-
-lines(X, Fit.mcmc.CI[,1], col="grey", lty=2, lwd=2)
-lines(X, Fit.mcmc.CI[,2], col="grey", lty=2,lwd=2)
-lines(X, True_Y, col="blue", lwd=2)
-
-points(t_obs,Observation, type="p",xlab="t",
-       ylab="y",col="black",lwd=3)
-legend("bottomright", c("Observations","True model",
-                        "Best Fit-mean mcmc","5-95% ( CI-mcmc + Noise )"), 
-       lty=c(NA,1,2,2),lwd=c(2,2,2,2), pch=c(1,NA,NA,NA), 
-       col=c("black","blue","red","grey"))
-dev.off()
-
 
 ################################################################################
 ####################### ADDED BY SAMANTHA ROTH #################################
