@@ -10,7 +10,7 @@ graphics.off()
 ################################################################################
 
 #set your working directory
-setwd("./Bayesian-Statistics-Class-Dartmouth")
+setwd("...")
 
 ################################################################################
 # Install and load the required libraries
