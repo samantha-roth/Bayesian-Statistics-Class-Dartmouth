@@ -86,6 +86,8 @@ library(plotrix)
 library(MASS)
 library(fields)
 
+if(!dir.exists("figures")) dir.create("figures")
+if(!dir.exists("figures/Workflow_example")) dir.create("figures/Workflow_example")
 
 ################################################################################
 # Define a seed for reproducibility
@@ -126,7 +128,7 @@ for (i in 1:length(X)){
 }
 
 # Save the plot in a pdf file
-pdf(file="Obs_VS_Model.pdf",10,6.17) 
+pdf(file="figures/Workflow_example/Obs_VS_Model.pdf",10,6.17) 
 plot(t_obs,Observation, type="p",col="black", lwd=2,ylim=c(-250,10), xlab="t", 
      ylab="y")
 lines(X,True_Y, type="l", col="blue", lwd=3)
@@ -161,7 +163,7 @@ for (i in 1:length(X)){
 }
 
 # plot the observational data, true model and best fit curve
-pdf(file="Best_fit_RMSE.pdf",10,6.17) 
+pdf(file="figures/Workflow_example/Best_fit_RMSE.pdf",10,6.17) 
 plot(t_obs,Observation, type="p",col="black", lwd=2,ylim=c(-300,30),
      xlim=c(-4.5,4.5), xlab="t", ylab="y")
 lines(X,Fit_model_Y, type="l", lty=2, col="red", lwd=3)
@@ -192,7 +194,7 @@ for(i in 1:length(V.theta1 )){
 
 # plot the SSE surface 
 
-pdf(file="SSE.pdf",12,8) 
+pdf(file="figures/Workflow_example/SSE.pdf",12,8) 
 par( mfrow= c(2,2))
 par(fig=c(0,1,0.4,1),mar=c(4,4,4,4))
 contour(V.theta1, V.theta2, 
@@ -287,7 +289,7 @@ for(i in 1:length(X)){
 }
 
 # plot observations and best fit with superimposed bootstraps
-pdf(file="Bootstrap_replicates.pdf",10,6.17)  
+pdf(file="figures/Workflow_example/Bootstrap_replicates.pdf",10,6.17)  
 plot(X, Fit_model_Y, col="red", type="l",lty=2,lwd=2,ylim=c(-300,30),
      xlim=c(-4.5,4.5) , xlab="t",ylab="y")
 
@@ -434,7 +436,7 @@ for(k in 1:NI){
 
 # Plot chain members convergence
 
-pdf(file="chain_parameter.pdf",10,8)  
+pdf(file="figures/Workflow_example/chain_parameter.pdf",10,8)  
 par( mfrow= c(2,1))
 
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
@@ -509,7 +511,7 @@ for(i in 1:length(V.theta1 )){
 
 # Plot the Log likelihood surface 
 
-pdf(file="posterior.pdf",13,10) 
+pdf(file="figures/Workflow_example/posterior.pdf",13,10) 
 
 par( mfrow= c(2,2))
 
@@ -571,7 +573,7 @@ for(i in 1:length(X)){
 
 
 # plot the observational data, true model and best fit curve using MCMC
-pdf(file="Best_fit_MCMC.pdf",10,6.17) 
+pdf(file="figures/Workflow_example/Best_fit_MCMC.pdf",10,6.17) 
 
 plot(X, Fit.mcmc.mean, col="red", type="l",lty=2,lwd=2,ylim=c(-300,30),
      xlim=c(-4.5,4.5) , xlab="t",
@@ -592,7 +594,7 @@ dev.off()
 
 # Plot the parameters densities for different seeds
 
-pdf(file="seeds_parameter.pdf",8,10)  
+pdf(file="figures/Workflow_example/seeds_parameter.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
 
@@ -645,7 +647,7 @@ for(i in 1:length(boot.par[,1])){
 }
 
 
-pdf(file="boots_vs_mcmc_parameter.pdf",8,10)  
+pdf(file="figures/Workflow_example/boots_vs_mcmc_parameter.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
 
@@ -675,7 +677,7 @@ dev.off()
 
 # Plot and compare theta1 and theta2 values for MCMC and bootstrapping for 
 # the same sample number
-pdf(file="mcmc_parameters.pdf",8,10)  
+pdf(file="figures/Workflow_example/mcmc_parameters.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
 
@@ -695,7 +697,7 @@ dev.off()
 
 
 # Compare 2D density plots of parameters estimation using MCMC and bootstrapping
-pdf(file="2Ddensities.pdf",8,10)  
+pdf(file="figures/Workflow_example/2Ddensities.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
 t1 <-kde2d(chain1_sample,chain2_sample,n=200)
@@ -721,7 +723,7 @@ dev.off()
 
 #does it look like the 2 pdfs are very close, i.e. there are enough steps?
 
-pdf(file="overlaid_densities_allVShalf2_parameter.pdf",8,10)  
+pdf(file="figures/Workflow_example/overlaid_densities_allVShalf2_parameter.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
 
@@ -741,7 +743,7 @@ dev.off()
 
 
 #does it look like 10k is enough steps?
-pdf(file="overlaid_densities_second5k_vs_first10k_parameter.pdf",8,10)  
+pdf(file="figures/Workflow_example/overlaid_densities_second5k_vs_first10k_parameter.pdf",8,10)  
 par( mfrow= c(2,1))
 par(fig=c(0,1,0.5,1),mar=c(4,4,4,4))
 
@@ -823,7 +825,7 @@ print(bm_est) #monte carlo estimate of P(Y<threshold | X< -4.7) for each thresho
 print(bm_se) #monte carlo standard errors for all thresholds
 
 #how different do the markov chains look for estimating each population proportion?
-pdf(file="PropEstimatesConvergence.pdf",width=8,height=6)
+pdf(file="figures/Workflow_example/PropEstimatesConvergence.pdf",width=8,height=6)
 par(mar=c(5.1, 4.1, 6.1, 2.1), xpd=TRUE)
 plot(1:length(pctBelowThresholds[,2]),pctBelowThresholds[,2],
      type="l", col= "orange", ylim=c(0,1),
@@ -839,7 +841,7 @@ legend("topright", c(paste0("y=",thresholds[2]),
 dev.off()
 
 #how early do the markov chains for estimating each population proportion converge?
-pdf(file="PropEstimatesConvergenceFirst5k.pdf",width=8,height=6)
+pdf(file="figures/Workflow_example/PropEstimatesConvergenceFirst5k.pdf",width=8,height=6)
 par(mar=c(5.1, 4.1, 6.1, 2.1), xpd=TRUE)
 plot(1:length(pctBelowThresholds[1:5e3,2]),pctBelowThresholds[1:5e3,2],
      type="l", col= "orange", ylim=c(0,1),
@@ -855,21 +857,21 @@ legend("topright", c(paste0("y=",thresholds[2]),
 dev.off()
 
 # How does the population proportion estimate change with the threshold?
-pdf(file="Threshold_vs_PctBelowThreshold.pdf",width=6,height=5) 
+pdf(file="figures/Workflow_example/Threshold_vs_PctBelowThreshold.pdf",width=6,height=5) 
 plot(thresholds,bm_est,
      ylab="Estimated P(Y< y|X < -4.7)",
      xlab="y")
 dev.off()   
 
 # How does the monte carlo standard error change with the population proportion estimate?
-pdf(file="PctBelowThreshold_vs_BMSE.pdf",width=6,height=5) 
+pdf(file="figures/Workflow_example/PctBelowThreshold_vs_MCSE.pdf",width=6,height=5) 
 plot(bm_est,bm_se,
      ylab="Monte Carlo Standard Error",
      xlab="Estimated P(Y< y|X < -4.7)")
 dev.off()   
 
 # How does the monte carlo standard error change with the threshold?
-pdf(file="Threshold_vs_MCSE.pdf",width=6,height=5) 
+pdf(file="figures/Workflow_example/Threshold_vs_MCSE.pdf",width=6,height=5) 
 plot(thresholds,bm_se,
      ylab="Monte Carlo Standard Error",
      xlab="y")
@@ -879,7 +881,7 @@ dev.off()
 pctBelowThresholds[1:5e3,6]
 
 #does it look like 10k is enough steps?
-pdf(file="overlaid_densities_second5k_vs_first10k_p2.pdf")  
+pdf(file="figures/Workflow_example/overlaid_densities_second5k_vs_first10k_p2.pdf")  
 
 plot(density(pctBelowThresholds[5e3:1e4,2]),main="",
      xlab =paste0("P(Y<",thresholds[2],"|X<-4.7)"),
@@ -890,7 +892,7 @@ legend("topright", c("second 5k","first 10k"),
 
 dev.off()
 
-pdf(file="overlaid_densities_second5k_vs_first10k_p6.pdf")  
+pdf(file="figures/Workflow_example/overlaid_densities_second5k_vs_first10k_p6.pdf")  
 
 plot(density(pctBelowThresholds[5e3:1e4,6]),main="",
      xlab =paste0("P(Y<",thresholds[6],"|X<-4.7)"),
@@ -902,7 +904,7 @@ legend("topright", c("second 5k","first 10k"),
 dev.off()
 
 
-pdf(file="overlaid_densities_second5k_vs_first10k_p10.pdf")  
+pdf(file="figures/Workflow_example/overlaid_densities_second5k_vs_first10k_p10.pdf")  
 
 plot(density(pctBelowThresholds[5e3:1e4,10]),main="",
      xlab =paste0("P(Y<",thresholds[10],"|X<-4.7)"),
@@ -914,7 +916,7 @@ legend("topright", c("second 5k","first 10k"),
 dev.off()
 
 #does it look like 130k is enough steps?
-pdf(file="overlaid_densities_half1_vs_all_p2.pdf")  
+pdf(file="figures/Workflow_example/overlaid_densities_half1_vs_all_p2.pdf")  
 
 plot(density(pctBelowThresholds[(NI/2+1):NI,2]),main="",
      xlab =paste0("P(Y<",thresholds[2],"|X<-4.7)"),
@@ -925,7 +927,7 @@ legend("topright", c("second half","all"),
 
 dev.off()
 
-pdf(file="overlaid_densities_half1_vs_all_p6.pdf")  
+pdf(file="figures/Workflow_example/overlaid_densities_half1_vs_all_p6.pdf")  
 
 plot(density(pctBelowThresholds[(NI/2+1):NI,6]),main="",
      xlab =paste0("P(Y<",thresholds[6],"|X<-4.7)"),
@@ -937,7 +939,7 @@ legend("topright", c("second half","all"),
 dev.off()
 
 
-pdf(file="overlaid_densities_half1_vs_all_p10.pdf")  
+pdf(file="figures/Workflow_example/overlaid_densities_half1_vs_all_p10.pdf")  
 
 plot(density(pctBelowThresholds[(NI/2+1):NI,10]),main="",
      xlab =paste0("P(Y<",thresholds[10],"|X<-4.7)"),
@@ -1086,7 +1088,7 @@ colnames(Result_sensitivity ) <- c( "theta1-total-effect",
                                     "theta2-total-effect","theta1-first-order", 
                                     "theta2-first-order", "theta1/theta2-second-order")
 
-pdf(file="Sensitivity_Analysis.pdf",14,7)  
+pdf(file="figures/Workflow_example/Sensitivity_Analysis.pdf",14,7)  
 par(fig=c(0,1,0.05,1),mar = c(3, 6, 2, 2))
 barplot(Result_sensitivity, beside = TRUE,cex.axis=1,
         cex.names=1,col=c("cornsilk4","orange"),ylim = c(0, 0.8),
