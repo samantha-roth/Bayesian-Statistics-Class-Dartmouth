@@ -1,3 +1,19 @@
+#code adapted from:
+#Ruckert, K. L., Wong, T. E., Guan, Y., Haran, M., & Applegate, P. J. (n.d.). 
+#A Calibration Problem and Markov Chain Monte Carlo. 
+#In V. Srikrishnan & K. Keller (Eds.), Advanced Risk Analysis in the Earth Sciences.
+
+################################################################################
+#Note from SR:
+#Methods kept the same with the exception of a methodological change to the 
+#convergence diagnostic that compares uncertainty bounds
+#rounded to each number of significant figures to the corresponding significant figure in the mean estimate.
+#The original approach used the wrong value for z.
+
+#I also added code showing how to continue a Markov chain where the last one left off
+#and computed convergence metrics and plots for the extended chain.
+################################################################################
+
 # Clear away any existing variables or figures.
 rm(list = ls())
 graphics.off()
@@ -11,7 +27,12 @@ library(batchmeans)
 # Set the seed for random sampling.
 # All seeds in this tutorial are arbitrary.
 
+setwd("...")
+
 if(!dir.exists("figures")) dir.create("figures")
+
+if(!dir.exists("figures/reading")) dir.create("figures/reading")
+
 set.seed(1)
 
 # Read in some observations with non-correlated measurement error
@@ -25,7 +46,7 @@ observations <- data$observations
 
 # Plot data.
 #par(mfrow = c(1,1))
-pdf(file="figures/time_vs_observations.pdf",width=7,height=5)  
+pdf(file="figures/reading/time_vs_observations.pdf",width=7,height=5)  
 plot(t, observations, pch = 20, xlab = "Time", ylab = "Observations")
 dev.off()
 
@@ -66,7 +87,7 @@ start_sigma <- sd(res)
 
 
 #par(mfrow = c(1,1))
-pdf("figures/time_vs_residuals.pdf",width=7,height=5)  
+pdf("figures/reading/time_vs_residuals.pdf",width=7,height=5)  
 plot(res, type = "l", ylab = "Residuals", xlab = "Time")
 points(res, pch = 20)
 abline(h = 0, lty = 2)
@@ -104,7 +125,7 @@ burnin <- seq(1, 0.01*NI, 1)
 mcmc.chains <- prechain[-burnin, ]
 
 ## Check #1: Trace Plots:
-pdf(file=paste0("figures/traceplots_",NI,"iterations.pdf"),width=10,height=7)  
+pdf(file=paste0("figures/reading/traceplots_",NI,"iterations.pdf"),width=10,height=7)  
 par(mfrow = c(2,2))
 for(i in 1:3){
   plot(mcmc.chains[ ,i], type="l", main = ""
@@ -118,18 +139,29 @@ dev.off()
 bm_est <- bmmat(mcmc.chains)
 print(bm_est)
 
-# Evaluate the number of significant figures
-z <-
-  half_width <- rep(NA, length(parnames))
-interval <- matrix(data = NA, nrow = 3, ncol = 2,
-                   dimnames = list(c(1:3), c("lower_bound", "upper_bound")))
+#is the mcse small relative to the size of the estimate?
 for(i in 1:length(parnames)){
-  z[i] <- (mean(mcmc.chains[,i]) - bm_est[i ,"est"])/bm_est[i ,"se"]
-  half_width[i] <- z[i] * bm_est[i ,"se"]
-  interval[i,1] <- bm_est[i ,"est"] - half_width[i]
-  interval[i,2] <- bm_est[i ,"est"] + half_width[i]
+  print(paste0("ratio of Monte Carlo standard error to Monte Carlo estimate for ",parnames[i],": ", as.numeric(bm_est[i,2]/bm_est[i,1])))
 }
-print(interval)
+
+# Evaluate the number of significant figures
+# assume we want a 95% confidence interval
+z <- 1.96
+interval <- matrix(data = NA, nrow = length(parnames), ncol = 2,
+                   dimnames = list(c(1:length(parnames)), c("lower_bound", "upper_bound")))
+for(i in 1:length(parnames)){
+  half_width<- z * bm_est[i ,"se"]
+  interval[i,1] <- bm_est[i ,"est"] - half_width
+  interval[i,2] <- bm_est[i ,"est"] + half_width
+}
+
+for(i in 1:length(parnames)){
+  print(paste0(parnames[i]," estimate :",as.numeric(bm_est[i,1])))
+  print(paste0(parnames[i]," interval :",as.numeric(interval[i,1]),",",as.numeric(interval[i,2])))
+}
+# "we are strongly suggesting that an estimate of the Monte Carlo standard error
+# should be used to assess simulation error and reported. 
+# Without an attached MCSE a point estimate should not be trusted" (Flegal, Haran, and Jones, 2008)
 
 ## Check #3: Heidelberger and Welch's convergence diagnostic:
 heidel.diag(mcmc.chains, eps = 0.1, pvalue = 0.05)
@@ -161,7 +193,7 @@ set.seed(1)
 mcmc_chain_list<- mcmc.list(list(mcmc1,mcmc2,mcmc3,mcmc4))
 gelman.diag(mcmc_chain_list)
 
-pdf(file=paste0("figures/gelman_plot_",NI,"iterations.pdf"),width=10,height=7)  
+pdf(file=paste0("figures/reading/gelman_plot_",NI,"iterations.pdf"),width=10,height=7)  
 gelman.plot(mcmc_chain_list)
 dev.off()
 
@@ -173,7 +205,7 @@ dev.off()
 hpdi = HPDinterval(mcmc1, prob = 0.90)
 # Create density plot of each parameter.
 
-pdf(file=paste0("figures/HPDI_vs_equaltailCI_",NI,"iterations.pdf"),width=10,height=8) 
+pdf(file=paste0("figures/reading/HPDI_vs_equaltailCI_",NI,"iterations.pdf"),width=10,height=8) 
 par(mfrow = c(2,2))
 for(i in 1:3){
   # Create density plot.
@@ -197,7 +229,7 @@ dev.off()
 ################################################################################
 #REASSESS CONVERGENCE AFTER ADDING MORE ITERATIONS
 
-NIextra<- NI*10
+NIextra<- NI*20
 
 set.seed(23)
 mcmc.out <- metrop(log.post, mcmc1[nrow(mcmc1),], nbatch = NIextra, scale = step)
@@ -236,7 +268,7 @@ chain4<- rbind(as.matrix(mcmc4),prechain4)
 mcmc4_all <- as.mcmc(chain4)
 
 ## Check #1: Trace Plots:
-pdf(file=paste0("figures/traceplots_",NI+NIextra,"iterations.pdf"),width=10,height=7)  
+pdf(file=paste0("figures/reading/traceplots_",NI+NIextra,"iterations.pdf"),width=10,height=7)  
 par(mfrow = c(2,2))
 for(i in 1:3){
   plot(chain1[ ,i], type="l", main = ""
