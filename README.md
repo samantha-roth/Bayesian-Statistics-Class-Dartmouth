@@ -20,8 +20,8 @@ Workflow_example_SR.R
 
 ## Additional examples
 - precalibration_vs_mcmc_example.R is not included in the main document. This code compares Bayesian calibration via MCMC to precalibration.
-- examplePlusExtraConvergenceChecks.R is included in the main document, but can also be run separately.
-
+- labX_SR.R is also not included in the main document. This code illustrates how to identify lack of convergence by considering multiple additional convergence metrics.
+- 
 ## Contributors
 Atieh Alipour (atieh.alipour@dartmouth.edu), Klaus Keller (Klaus@dartmouth.edu), Haochen Ye (hxy46@psu.edu), Prabhat Hegde (Prabhat.Hegde.TH@dartmouth.edu), Sitara Baboolal (Sitara.D.Baboolal@dartmouth.edu), and Samantha Roth (samantha.m.roth@dartmouth.edu)
 
@@ -31,4 +31,4 @@ Format: Version / last changes / by whom / what
 2. Dec 27 2023 / Klaus Keller / update header, clean up code, rename file
 3. Jan 25 2024 / Klaus Keller / clean up comments and format
 4. Feb 05 2024 / Klaus Keller / add comments
-5. Feb 13 2025 / Samantha Roth / add comments, examplePlusExtraConvergenceChecks.R, precalibration_vs_mcmc_example.R
+5. Feb 21 2025 / Samantha Roth / add comments, labX_SR.R, precalibration_vs_mcmc_example.R
