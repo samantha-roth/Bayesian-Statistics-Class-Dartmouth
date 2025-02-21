@@ -9,11 +9,13 @@ This codes includes a toy example for implementing a workflow to
 This code also includes an example for implementing a workflow to compare Bayesian calibration via MCMC to precalibration.
 
 ## How to run:
-1. Save the file in a directory
-2. Open R-Studio and navigate to the folder with the file
-3. Make this directory the work directory
-4. Open the file
-5. Source the file
+1. Download this repository in a zip file or clone it.
+2. Unzip the folder corresponding to the respository if needed.
+3. Open R-Studio and navigate to the folder corresponding to this repository.
+4. Make this directory the work directory.
+5. Open each R script.
+6. Source each R script.
+7. Compare the figures produced by each R script to the figures with the same name and folder in the `compare` folder.
 
 ## Main document
 Workflow_example_SR.R
