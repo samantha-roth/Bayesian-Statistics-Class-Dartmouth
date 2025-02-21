@@ -31,4 +31,4 @@ Format: Version / last changes / by whom / what
 2. Dec 27 2023 / Klaus Keller / update header, clean up code, rename file
 3. Jan 25 2024 / Klaus Keller / clean up comments and format
 4. Feb 05 2024 / Klaus Keller / add comments
-5. Feb 13 2025 / Samantha Roth / add comments, examplePlusExtraConvergenceChecks.R, precalibration_vs_mcmc_example.R
+5. Feb 21 2025 / Samantha Roth / add comments, labX_SR.R, precalibration_vs_mcmc_example.R
