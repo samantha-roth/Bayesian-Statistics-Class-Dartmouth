@@ -772,7 +772,7 @@ library(batchmeans)
 
 #mcmc.chains<- mcmc.chains[-(1:30000),]
 
-thresholds<- seq(-200,-300,by=-10)
+thresholds<- seq(-210,-290,by=-10)
 
 bm_est<- rep(NA,length(thresholds))
 bm_se<- rep(NA,length(thresholds))
@@ -821,38 +821,49 @@ for(th in 1:length(thresholds)){
   
 }
 
-print(bm_est) #monte carlo estimate of P(Y<threshold | X< -4.7) for each threshold
-print(bm_se) #monte carlo standard errors for all thresholds
+#monte carlo estimate of P(Y<threshold | X< -4.7) for each threshold
+for(i in 1:length(thresholds)){
+  print(paste0("% below ",thresholds[i]," estimate :", as.numeric(bm_est[i])))
+}
+
+#monte carlo standard errors of estimators for all thresholds
+for(i in 1:length(thresholds)){
+  print(paste0("% below ",thresholds[i]," MCSE :", as.numeric(bm_se[i])))
+}
+
+#the MCSE increases as the estimated proportion decreases from close to 1 to 1/2 then
+#then decreases as the estimated proportion decreases from 1/2 to close to 0
+
 
 #how different do the markov chains look for estimating each population proportion?
-pdf(file="figures/Workflow_example/PropEstimatesConvergence.pdf",width=8,height=6)
+pdf(file="figures/Workflow_example/PropEstimatesTraceplots.pdf",width=8,height=6)
 par(mar=c(5.1, 4.1, 6.1, 2.1), xpd=TRUE)
-plot(1:length(pctBelowThresholds[,2]),pctBelowThresholds[,2],
+plot(1:length(pctBelowThresholds[,1]),pctBelowThresholds[,1],
      type="l", col= "orange", ylim=c(0,1),
      ylab=paste0("P(Y<y|X<-4.7)"),xlab="step")
 #lines(1:length(pctBelowThresholds[,3]),pctBelowThresholds[,3],type="l",col="red")
-lines(1:length(pctBelowThresholds[,6]),pctBelowThresholds[,6],type="l",col="purple")
+lines(1:length(pctBelowThresholds[,5]),pctBelowThresholds[,5],type="l",col="purple")
 #lines(1:length(pctBelowThresholds[,7]),pctBelowThresholds[,7],type="l",col="blue")
-lines(1:length(pctBelowThresholds[,10]),pctBelowThresholds[,10],type="l",col="turquoise")
-legend("topright", c(paste0("y=",thresholds[2]),
-                     paste0("y=",thresholds[6]),
-                     paste0("y=",thresholds[10])),
+lines(1:length(pctBelowThresholds[,9]),pctBelowThresholds[,9],type="l",col="turquoise")
+legend("topright", c(paste0("y=",thresholds[1]),
+                     paste0("y=",thresholds[5]),
+                     paste0("y=",thresholds[9])),
        lty=1, lwd = 3, col = c("orange","purple","turquoise"),inset=c(0,-0.25))
 dev.off()
 
 #how early do the markov chains for estimating each population proportion converge?
-pdf(file="figures/Workflow_example/PropEstimatesConvergenceFirst5k.pdf",width=8,height=6)
+pdf(file="figures/Workflow_example/PropEstimatesTraceplotsFirst5k.pdf",width=8,height=6)
 par(mar=c(5.1, 4.1, 6.1, 2.1), xpd=TRUE)
-plot(1:length(pctBelowThresholds[1:5e3,2]),pctBelowThresholds[1:5e3,2],
+plot(1:length(pctBelowThresholds[1:5e3,1]),pctBelowThresholds[1:5e3,1],
      type="l", col= "orange", ylim=c(0,1),
      ylab=paste0("P(Y<y|X<-4.7)"),xlab="step")
 #lines(1:length(pctBelowThresholds[,3]),pctBelowThresholds[,3],type="l",col="red")
-lines(1:length(pctBelowThresholds[1:5e3,6]),pctBelowThresholds[1:5e3,6],type="l",col="purple")
+lines(1:length(pctBelowThresholds[1:5e3,5]),pctBelowThresholds[1:5e3,5],type="l",col="purple")
 #lines(1:length(pctBelowThresholds[,7]),pctBelowThresholds[,7],type="l",col="blue")
-lines(1:length(pctBelowThresholds[1:5e3,10]),pctBelowThresholds[1:5e3,10],type="l",col="turquoise")
-legend("topright", c(paste0("y=",thresholds[2]),
-                     paste0("y=",thresholds[6]),
-                     paste0("y=",thresholds[10])),
+lines(1:length(pctBelowThresholds[1:5e3,9]),pctBelowThresholds[1:5e3,9],type="l",col="turquoise")
+legend("topright", c(paste0("y=",thresholds[1]),
+                     paste0("y=",thresholds[5]),
+                     paste0("y=",thresholds[9])),
        lty=1, lwd = 3, col = c("orange","purple","turquoise"),inset=c(0,-0.25))
 dev.off()
 
@@ -877,93 +888,92 @@ plot(thresholds,bm_se,
      xlab="y")
 dev.off()   
 
-
-pctBelowThresholds[1:5e3,6]
-
 #does it look like 10k is enough steps?
-pdf(file="figures/Workflow_example/overlaid_densities_second5k_vs_first10k_p2.pdf")  
 
-plot(density(pctBelowThresholds[5e3:1e4,2]),main="",
-     xlab =paste0("P(Y<",thresholds[2],"|X<-4.7)"),
+#overlay density plots for first 10k steps vs second 5k steps
+#for threshold= -210
+pdf(file="figures/Workflow_example/overlaid_densities_second5k_vs_first10k_-210.pdf")  
+plot(density(pctBelowThresholds[5e3:1e4,1]),main="",
+     xlab =paste0("P(Y<",thresholds[1],"|X<-4.7)"),
      col = "turquoise",lwd=3)
-lines(density(pctBelowThresholds[1:1e4,2]),col = "purple",lwd=3)
+lines(density(pctBelowThresholds[1:1e4,1]),col = "purple",lwd=3)
 legend("topright", c("second 5k","first 10k"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
-
 dev.off()
 
-pdf(file="figures/Workflow_example/overlaid_densities_second5k_vs_first10k_p6.pdf")  
-
-plot(density(pctBelowThresholds[5e3:1e4,6]),main="",
-     xlab =paste0("P(Y<",thresholds[6],"|X<-4.7)"),
+#overlay density plots for first 10k steps vs second 5k steps
+#for threshold= -250
+pdf(file="figures/Workflow_example/overlaid_densities_second5k_vs_first10k_-250.pdf")  
+plot(density(pctBelowThresholds[5e3:1e4,5]),main="",
+     xlab =paste0("P(Y<",thresholds[5],"|X<-4.7)"),
      col = "turquoise",lwd=3)
-lines(density(pctBelowThresholds[1:1e4,6]),col = "purple",lwd=3)
+lines(density(pctBelowThresholds[1:1e4,5]),col = "purple",lwd=3)
 legend("topright", c("second 5k","first 10k"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
-
 dev.off()
 
-
-pdf(file="figures/Workflow_example/overlaid_densities_second5k_vs_first10k_p10.pdf")  
-
-plot(density(pctBelowThresholds[5e3:1e4,10]),main="",
-     xlab =paste0("P(Y<",thresholds[10],"|X<-4.7)"),
+#overlay density plots for first 10k steps vs second 5k steps
+#for threshold= -290
+pdf(file="figures/Workflow_example/overlaid_densities_second5k_vs_first10k_-290.pdf")  
+plot(density(pctBelowThresholds[5e3:1e4,9]),main="",
+     xlab =paste0("P(Y<",thresholds[9],"|X<-4.7)"),
      col = "turquoise",lwd=3)
-lines(density(pctBelowThresholds[1:1e4,10]),col = "purple",lwd=3)
+lines(density(pctBelowThresholds[1:1e4,9]),col = "purple",lwd=3)
 legend("topright", c("second 5k","first 10k"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
-
 dev.off()
 
 #does it look like 130k is enough steps?
-pdf(file="figures/Workflow_example/overlaid_densities_half1_vs_all_p2.pdf")  
 
-plot(density(pctBelowThresholds[(NI/2+1):NI,2]),main="",
-     xlab =paste0("P(Y<",thresholds[2],"|X<-4.7)"),
+#overlay density plots for all steps vs second half of steps
+#for threshold= -210
+pdf(file="figures/Workflow_example/overlaid_densities_half1_vs_all_-210.pdf")  
+plot(density(pctBelowThresholds[(NI/2+1):NI,1]),main="",
+     xlab =paste0("P(Y<",thresholds[1],"|X<-4.7)"),
      col = "turquoise",lwd=3)
-lines(density(pctBelowThresholds[1:NI,2]),col = "purple",lwd=3)
+lines(density(pctBelowThresholds[1:NI,1]),col = "purple",lwd=3)
 legend("topright", c("second half","all"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
-
 dev.off()
 
-pdf(file="figures/Workflow_example/overlaid_densities_half1_vs_all_p6.pdf")  
-
-plot(density(pctBelowThresholds[(NI/2+1):NI,6]),main="",
-     xlab =paste0("P(Y<",thresholds[6],"|X<-4.7)"),
+#overlay density plots for all steps vs second half of steps
+#for threshold= -250
+pdf(file="figures/Workflow_example/overlaid_densities_half1_vs_all_-250.pdf")  
+plot(density(pctBelowThresholds[(NI/2+1):NI,5]),main="",
+     xlab =paste0("P(Y<",thresholds[5],"|X<-4.7)"),
      col = "turquoise",lwd=3)
-lines(density(pctBelowThresholds[1:NI,6]),col = "purple",lwd=3)
+lines(density(pctBelowThresholds[1:NI,5]),col = "purple",lwd=3)
 legend("topright", c("second half","all"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
-
 dev.off()
 
-
-pdf(file="figures/Workflow_example/overlaid_densities_half1_vs_all_p10.pdf")  
-
-plot(density(pctBelowThresholds[(NI/2+1):NI,10]),main="",
-     xlab =paste0("P(Y<",thresholds[10],"|X<-4.7)"),
+#overlay density plots for all steps vs second half of steps
+#for threshold= -290
+pdf(file="figures/Workflow_example/overlaid_densities_half1_vs_all_-290.pdf")  
+plot(density(pctBelowThresholds[(NI/2+1):NI,9]),main="",
+     xlab =paste0("P(Y<",thresholds[9],"|X<-4.7)"),
      col = "turquoise",lwd=3)
-lines(density(pctBelowThresholds[1:NI,10]),col = "purple",lwd=3)
+lines(density(pctBelowThresholds[1:NI,9]),col = "purple",lwd=3)
 legend("topright", c("second half","all"),
        lty=1, lwd = 3, col = c("turquoise","purple"))
-
 dev.off()
 
 #compare the rounded uncertainty bounds to the estimate for each significant figure
-
-z <- half_width <- rep(NA, length(thresholds))
+z <- 1.96
 interval <- matrix(data = NA, nrow = length(thresholds), ncol = 2)
 rownames(interval)<- thresholds
 colnames(interval)<- c("lower_bound", "upper_bound")
 for(i in 1:length(thresholds)){
-  z[i] <- (mean(pctBelowThresholds[,i]) - bm_est[i])/bm_se[i]
-  half_width[i] <- z[i] * bm_se[i ]
-  interval[i,1] <- bm_est[i] - half_width[i]
-  interval[i,2] <- bm_est[i] + half_width[i]
+  half_width <- z * bm_se[i ]
+  interval[i,1] <- bm_est[i] - half_width
+  interval[i,2] <- bm_est[i] + half_width
 }
-print(interval)
-print(bm_est)
+
+#round the 95% CI bounds to determine which significant figures can be trusted
+for(i in 1:length(thresholds)){
+  print(paste0("% below ",thresholds[i]," estimate :",as.numeric(bm_est[i])))
+  print(paste0("% below ",thresholds[i]," 95% confidence interval :",as.numeric(interval[i,1]),",",as.numeric(interval[i,2])))
+}
 
 
 ################################################################################
