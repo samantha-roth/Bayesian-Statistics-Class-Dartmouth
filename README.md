@@ -27,7 +27,7 @@ Workflow_example_SR.R
 
 ## Contributors
 Atieh Alipour (atieh.alipour@dartmouth.edu), Klaus Keller (Klaus@dartmouth.edu), Haochen Ye (hxy46@psu.edu), Prabhat Hegde (Prabhat.Hegde.TH@dartmouth.edu), Sitara Baboolal (Sitara.D.Baboolal@dartmouth.edu), and Samantha Roth (samantha.m.roth@dartmouth.edu).
-Kelsey Ruckert, Tony wong, Yawen Guan, Patrick Applegate, and Murali Haran provided the original code and example in Reading.Rmd. Samantha Roth later edited this example and provided additional code.
+Kelsey Ruckert, Tony Wong, Yawen Guan, Patrick Applegate, and Murali Haran provided the original code and example in Reading.Rmd. Samantha Roth later edited this example and provided additional code.
 
 ## Versions
 Format: Version / last changes / by whom / what
