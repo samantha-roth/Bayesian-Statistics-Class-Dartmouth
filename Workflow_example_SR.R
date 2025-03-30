@@ -201,7 +201,7 @@ contour(V.theta1, V.theta2,
         V.SSE,levels = ceiling(seq(min(V.SSE),min(V.SSE)+sd(V.SSE),
                                    sd(V.SSE)/10)) ,
         col = hcl.colors(11,"heat") ,lwd=2,xlab="theta1", ylab="theta2")
-abline(h = V.theta2[101], lwd = 3,lty=2,col="darkgrey");
+abline(h = V.theta2[111], lwd = 3,lty=2,col="darkgrey");
 abline(v = V.theta1[101], lwd = 3,lty=2,col="darkgrey");
 points(True_theta1,True_theta2,pch=4, lwd = 4,col="black")
 points(fit_minRMSE$par[1],fit_minRMSE$par[2],pch=4, lwd = 4,col="red")
