@@ -201,8 +201,8 @@ contour(V.theta1, V.theta2,
         V.SSE,levels = ceiling(seq(min(V.SSE),min(V.SSE)+sd(V.SSE),
                                    sd(V.SSE)/10)) ,
         col = hcl.colors(11,"heat") ,lwd=2,xlab="theta1", ylab="theta2")
-abline(h = V.theta2[100], lwd = 3,lty=2,col="darkgrey");
-abline(v = V.theta1[100], lwd = 3,lty=2,col="darkgrey");
+abline(h = V.theta2[101], lwd = 3,lty=2,col="darkgrey");
+abline(v = V.theta1[101], lwd = 3,lty=2,col="darkgrey");
 points(True_theta1,True_theta2,pch=4, lwd = 4,col="black")
 points(fit_minRMSE$par[1],fit_minRMSE$par[2],pch=4, lwd = 4,col="red")
 legend("bottomright", c("SSE-Contours", "theta1-fixed","theta2-fixed",
@@ -219,7 +219,7 @@ legend("topright", c("SSE for fixed theta1","True value"),lty=c(1,2),
        col = c("darkred","black"))
 
 par(fig=c(0.5,1,0.05,0.47), new=TRUE)
-plot(V.theta1,V.SSE[,111], type="l",col="darkred", lwd=2, xlab="theta1", 
+plot(V.theta1,V.SSE[,101], type="l",col="darkred", lwd=2, xlab="theta1", 
      ylab="SSE")
 abline(v = True_theta1, lwd = 3,lty=2,col="black");
 legend("topleft", c("SSE for fixed theta2","True value"),lty=c(1,2),lwd=c(2,2), 
